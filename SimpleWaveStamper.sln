@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleWaveStamper", "SimpleWaveStamper\SimpleWaveStamper.csproj", "{87E73763-5DE1-4283-9461-E9312BA3F139}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{87E73763-5DE1-4283-9461-E9312BA3F139}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87E73763-5DE1-4283-9461-E9312BA3F139}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87E73763-5DE1-4283-9461-E9312BA3F139}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87E73763-5DE1-4283-9461-E9312BA3F139}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {98C6DE05-5DAD-4156-AB7D-4AAC801B9F0F}
+	EndGlobalSection
+EndGlobal
