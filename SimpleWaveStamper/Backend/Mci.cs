@@ -10,10 +10,10 @@ namespace SimpleWaveStamper
     static class Mci
     {
         [DllImport("winmm.dll")]
-        private static extern void mciSendString(string cmdString, string returnString, int cchReturn, int callBack);
-        public static void Run(string cmdString)
+        private static extern void mciSendString(string cmdString, StringBuilder returnString, int cchReturn, int callBack);
+        public static void Run(string cmdString, StringBuilder returnString = null, int cchReturn = 0, int callBack = 0)
         {
-            mciSendString(cmdString, "", 0, 0);
+            mciSendString(cmdString, returnString, cchReturn, callBack);
         }
     }
 }

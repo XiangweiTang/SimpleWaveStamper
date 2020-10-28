@@ -37,19 +37,29 @@ namespace SimpleWaveStamper
             Mci.Run(pauseString);
         }
 
-        public void Close()
+        public void Stop()
         {
-            string stopString = $"close {ALIAS}";
+            string stopString = $"stop {ALIAS}";
             Mci.Run(stopString);
+            string closeString = $"close {ALIAS}";
+            Mci.Run(closeString);
             OpenedFlag = false;
         }
 
         public void PlayFrom(int miliseconds)
         {
-            string playFromString = $"play audio from {miliseconds}";
+            string playFromString = $"play {ALIAS} from {miliseconds}";
             if (!OpenedFlag)
                 Open();
             Mci.Run(playFromString);
+        }
+
+        public string Position()
+        {
+            string statusString = $"status {ALIAS} position notify";
+            StringBuilder s = new StringBuilder();
+            Mci.Run(statusString, s, 128);
+            return s.ToString();
         }
     }
 }

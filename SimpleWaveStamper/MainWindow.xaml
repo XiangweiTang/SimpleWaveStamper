@@ -7,6 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+        <Slider x:Name="PlayerSlider" HorizontalAlignment="Left" Margin="30,50,0,0" VerticalAlignment="Top" Width="750" GotMouseCapture="PlayerSlider_GotMouseCapture" LostMouseCapture="PlayerSlider_LostMouseCapture"/>
+        <Button x:Name="BtnPlay" Content="Play" HorizontalAlignment="Left" Margin="74,108,0,0" VerticalAlignment="Top" Width="75" Click="BtnPlay_Click"/>
+        <Button x:Name="BtnPause" Content="Pause" HorizontalAlignment="Left" Margin="183,108,0,0" VerticalAlignment="Top" Width="75" Click="BtnPause_Click"/>
+        <Button x:Name="BtnStop" Content="Stop" HorizontalAlignment="Left" Margin="298,108,0,0" VerticalAlignment="Top" Width="75" Click="BtnStop_Click"/>
+        <Button x:Name="BtnTimeStamp" Content="TimeStamp" HorizontalAlignment="Left" Margin="404,108,0,0" VerticalAlignment="Top" Width="75" Click="BtnTimeStamp_Click"/>
+
     </Grid>
 </Window>
