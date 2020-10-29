@@ -11,15 +11,23 @@ namespace SimpleWaveStamper
     {
         List<int> InternalMilisecondsList = new List<int>();
         public TimeStamps() { Clear(); }
+        public int this[int index]
+        {
+            get
+            {
+                return InternalMilisecondsList[index];
+            }
+        }
         public void Clear() { InternalMilisecondsList = new List<int>(); }
         public void Add(string s)
         {
             int miliseconds = int.Parse(s);
             InternalMilisecondsList.Add(miliseconds);
-        }
-        public void Refresh()
-        {
             InternalMilisecondsList.Sort();
+        }
+        public void Remove(int i)
+        {
+            InternalMilisecondsList.RemoveAt(i);
         }
         public IEnumerable<string> GenerateTimeStampPoint()
         {
@@ -36,8 +44,7 @@ namespace SimpleWaveStamper
             }
         }
         public IEnumerable<(double, double)> GenerateTimeStampPairs(double max=double.MaxValue)
-        {
-            Refresh();            
+        {          
             double pre = 0;
             foreach(int i in InternalMilisecondsList)
             {

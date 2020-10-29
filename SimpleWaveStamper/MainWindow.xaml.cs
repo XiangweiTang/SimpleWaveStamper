@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -11,12 +13,13 @@ namespace SimpleWaveStamper
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string AudioPath = @"C:\Users\v-xianta\Downloads\20200111-1HT_1_00061.wav";
+        private string AudioPath = @"";
         MciPlayer MP = null;
-        private double Ratio = 1;
+        private double MilisecondPerValue = 1;
         private double ValuePerMilisecond = 1;        
         System.Windows.Forms.Timer PlayerTimer = new System.Windows.Forms.Timer();
         TimeStamps TS = new TimeStamps();
+        bool InitializedFlag = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -24,16 +27,22 @@ namespace SimpleWaveStamper
         }
         private void BackendInit()
         {
+            if (!File.Exists(AudioPath))
+                return;
             Wave w = new Wave();
             w.Load(AudioPath);
-            Ratio = 1000.0 * w.DataLength / w.ByteRate / PlayerSlider.Maximum;
+            MilisecondPerValue = 1000.0 * w.DataLength / w.ByteRate / PlayerSlider.Maximum;
             ValuePerMilisecond = PlayerSlider.Maximum * w.ByteRate / w.DataLength / 1000;
             MP = new MciPlayer(AudioPath);
-            PlayerTimer.Tick += new EventHandler(Reposition);
+            PlayerTimer.Tick += new EventHandler(AutoPosition);
             PlayerTimer.Interval = 50;
+            PlayerSlider.Value = PlayerSlider.Minimum;
+            InitializedFlag = true;
         }
         private void PlayerSlider_GotMouseCapture(object sender, MouseEventArgs e)
         {
+            if (!InitializedFlag)
+                return;
             if (MP != null)
             {
                 MP.Pause();
@@ -45,11 +54,13 @@ namespace SimpleWaveStamper
 
         private void PlayerSlider_LostMouseCapture(object sender, MouseEventArgs e)
         {
+            if (!InitializedFlag)
+                return;
             if (MP != null)
             {
-                int miliseconds = (int)(Ratio * PlayerSlider.Value);
-                MP.PlayFrom(miliseconds);
-                PlayerTimer.Start();
+                int miliseconds = (int)(MilisecondPerValue * PlayerSlider.Value);
+                //MP.PlayFrom(miliseconds);
+                //PlayerTimer.Start();
             }
             else
                 ErrorAudioNotInitialized();
@@ -57,9 +68,13 @@ namespace SimpleWaveStamper
 
         private void BtnPlay_Click(object sender, RoutedEventArgs e)
         {
+            if (!InitializedFlag)
+                return;
             if (MP != null)
             {
-                MP.Play();
+                if (PlayerSlider.Value == PlayerSlider.Maximum)
+                    PlayerSlider.Value = PlayerSlider.Minimum;
+                MP.PlayFrom((int)(PlayerSlider.Value * MilisecondPerValue));
                 PlayerTimer.Start();
             }
             else
@@ -68,6 +83,8 @@ namespace SimpleWaveStamper
 
         private void BtnPause_Click(object sender, RoutedEventArgs e)
         {
+            if (!InitializedFlag)
+                return;
             if (MP != null)
             {
                 MP.Pause();
@@ -79,6 +96,8 @@ namespace SimpleWaveStamper
 
         private void BtnStop_Click(object sender, RoutedEventArgs e)
         {
+            if (!InitializedFlag)
+                return;
             if (MP != null)
             {
                 MP.Stop();
@@ -93,28 +112,43 @@ namespace SimpleWaveStamper
         {
             MessageBox.Show("The audio file is not set.");
         }  
-        private void Reposition(object sender, EventArgs e)
+        private void AutoPosition(object sender, EventArgs e)
         {
             PlayerSlider.Value = int.Parse(MP.Position()) * ValuePerMilisecond;
         }
 
         private void BtnTimeStamp_Click(object sender, RoutedEventArgs e)
         {
+            if (!InitializedFlag)
+                return;
             if (MP != null)
             {
                 MP.Pause();
                 PlayerTimer.Stop();
-
                 TS.Add(MP.Position());
+                TimeStampList.ItemsSource = TS.GenerateTimeStampPoint();
             }
             else
                 ErrorAudioNotInitialized();
         }
 
-        private void Refresh_Click(object sender, RoutedEventArgs e)
+        private void TimeStampList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            TS.Refresh();
-            TimeStampList.ItemsSource = TS.GenerateTimeStampPoint();
+            if (!InitializedFlag)
+                return;
+            MP.Pause();
+            int miliseconds = TS[TimeStampList.SelectedIndex];
+            PlayerSlider.Value = miliseconds * ValuePerMilisecond;
+        }
+
+        private void BtnSelectAudio_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            if (dialog.ShowDialog() == true)
+            {
+                AudioPath = dialog.FileName;
+            }
+            BackendInit();
         }
     }
 }
