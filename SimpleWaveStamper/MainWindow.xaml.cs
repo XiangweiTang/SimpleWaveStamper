@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -10,11 +11,12 @@ namespace SimpleWaveStamper
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string AudioPath = @"D:\tmp\Audio\ihudodo.wav";
+        private string AudioPath = @"C:\Users\v-xianta\Downloads\20200111-1HT_1_00061.wav";
         MciPlayer MP = null;
         private double Ratio = 1;
-        private double ValuePerMilisecond = 1;
+        private double ValuePerMilisecond = 1;        
         System.Windows.Forms.Timer PlayerTimer = new System.Windows.Forms.Timer();
+        TimeStamps TS = new TimeStamps();
         public MainWindow()
         {
             InitializeComponent();
@@ -102,21 +104,17 @@ namespace SimpleWaveStamper
             {
                 MP.Pause();
                 PlayerTimer.Stop();
-                SetTimeStamp(MP.Position());
+
+                TS.Add(MP.Position());
             }
             else
                 ErrorAudioNotInitialized();
         }
 
-        private void SetTimeStamp(string s)
+        private void Refresh_Click(object sender, RoutedEventArgs e)
         {
-            int totalMiliseconds = int.Parse(s);
-            int miliseconds = totalMiliseconds % 1000;
-            totalMiliseconds /= 1000;
-            int seconds = totalMiliseconds % 60;
-            totalMiliseconds /= 60;
-            int minutes = totalMiliseconds % 60;
-            int hour = totalMiliseconds / 60;
+            TS.Refresh();
+            TimeStampList.ItemsSource = TS.GenerateTimeStampPoint();
         }
     }
 }
