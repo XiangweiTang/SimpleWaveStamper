@@ -18,7 +18,7 @@ namespace SimpleWaveStamper
 
         public void Open()
         {
-            string openString = $"open {AudioPath} alias {ALIAS}";
+            string openString = $"open \"{AudioPath}\" alias {ALIAS}";
             Mci.Run(openString);
             OpenedFlag = true;
         }

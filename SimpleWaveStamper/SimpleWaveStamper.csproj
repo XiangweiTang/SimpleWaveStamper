@@ -67,6 +67,7 @@
     <Compile Include="Backend\Mci.cs" />
     <Compile Include="Backend\MciPlayer.cs" />
     <Compile Include="Backend\Sanity.cs" />
+    <Compile Include="Backend\TimeStamps.cs" />
     <Compile Include="Backend\Wave.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
