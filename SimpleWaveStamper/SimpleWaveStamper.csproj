@@ -64,9 +64,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Backend\FormOps.cs" />
     <Compile Include="Backend\Mci.cs" />
     <Compile Include="Backend\MciPlayer.cs" />
     <Compile Include="Backend\Sanity.cs" />
+    <Compile Include="Backend\Storage.cs" />
     <Compile Include="Backend\TimeStamps.cs" />
     <Compile Include="Backend\Wave.cs" />
     <Compile Include="MainWindow.xaml.cs">
