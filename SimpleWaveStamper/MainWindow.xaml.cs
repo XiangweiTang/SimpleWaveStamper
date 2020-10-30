@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Threading;
+using System.Linq;
 
 namespace SimpleWaveStamper
 {
@@ -18,8 +19,10 @@ namespace SimpleWaveStamper
         private double MilisecondPerValue = 1;
         private double ValuePerMilisecond = 1;        
         System.Windows.Forms.Timer PlayerTimer = new System.Windows.Forms.Timer();
+        System.Windows.Forms.Timer SaverTimer = new System.Windows.Forms.Timer();
         TimeStamps TS = new TimeStamps();
         bool InitializedFlag = false;
+        double AudioLength = double.MaxValue;
         public MainWindow()
         {
             InitializeComponent();
@@ -29,14 +32,27 @@ namespace SimpleWaveStamper
         {
             if (!File.Exists(AudioPath))
                 return;
+
             Wave w = new Wave();
             w.Load(AudioPath);
-            MilisecondPerValue = 1000.0 * w.DataLength / w.ByteRate / PlayerSlider.Maximum;
-            ValuePerMilisecond = PlayerSlider.Maximum * w.ByteRate / w.DataLength / 1000;
+
+            AudioLength = 1.0*w.DataLength / w.ByteRate;
+            MilisecondPerValue = 1000.0 * AudioLength / PlayerSlider.Maximum;
+            ValuePerMilisecond = PlayerSlider.Maximum / AudioLength / 1000;
+
             MP = new MciPlayer(AudioPath);
+            MP.Open();
+
             PlayerTimer.Tick += new EventHandler(AutoPosition);
-            PlayerTimer.Interval = 50;
+            // The player refresh every 100 miliseconds.
+            PlayerTimer.Interval = 100;
+
+            SaverTimer.Tick += new EventHandler(OutputTimeStamp);
+            // The saver auto save every 20 seconds.
+            SaverTimer.Interval = 1000 * 20;
+
             PlayerSlider.Value = PlayerSlider.Minimum;
+
             InitializedFlag = true;
         }
         private void PlayerSlider_GotMouseCapture(object sender, MouseEventArgs e)
@@ -125,7 +141,8 @@ namespace SimpleWaveStamper
             {
                 MP.Pause();
                 PlayerTimer.Stop();
-                TS.Add(MP.Position());
+                int miliseconds = (int)(MilisecondPerValue * PlayerSlider.Value);
+                TS.Add(miliseconds);
                 TimeStampList.ItemsSource = TS.GenerateTimeStampPoint();
             }
             else
@@ -149,6 +166,19 @@ namespace SimpleWaveStamper
                 AudioPath = dialog.FileName;
             }
             BackendInit();
+        }
+
+        const string SAVING_PATH = @"TimeStamp.txt";
+        private void OutputTimeStamp(object sender, EventArgs e)
+        {
+            var list = TS.GenerateTimeStampPairs(AudioLength).Select(x => $"{x.Item1}\t{x.Item2}");
+            File.WriteAllLines(SAVING_PATH, list);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            OutputTimeStamp(new object(),new EventArgs());
+            MessageBox.Show($"Time stamp has been saved to {SAVING_PATH}.");
         }
     }
 }
