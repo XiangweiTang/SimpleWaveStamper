@@ -25,6 +25,11 @@ namespace SimpleWaveStamper
             InternalMilisecondsList.Add(miliseconds);
             InternalMilisecondsList.Sort();
         }
+        public void Add(int miliseconds)
+        {
+            InternalMilisecondsList.Add(miliseconds);
+            InternalMilisecondsList.Sort();
+        }
         public void Remove(int i)
         {
             InternalMilisecondsList.RemoveAt(i);

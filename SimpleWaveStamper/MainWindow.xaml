@@ -1,4 +1,4 @@
-﻿<Window x:Class="SimpleWaveStamper.MainWindow"
+﻿<Window x:Name="BtnSave" x:Class="SimpleWaveStamper.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -14,6 +14,7 @@
         <Button x:Name="BtnTimeStamp" Content="TimeStamp" HorizontalAlignment="Left" Margin="404,108,0,0" VerticalAlignment="Top" Width="75" Click="BtnTimeStamp_Click"/>
         <ListBox x:Name="TimeStampList" HorizontalAlignment="Left" Height="196" Margin="49,152,0,0" VerticalAlignment="Top" Width="100" SelectionChanged="TimeStampList_SelectionChanged"/>
         <Button x:Name="BtnSelectAudio" Content="SelectAudio" HorizontalAlignment="Left" Margin="505,108,0,0" VerticalAlignment="Top" Width="74" Click="BtnSelectAudio_Click"/>
+        <Button Content="Save" HorizontalAlignment="Left" Margin="623,108,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
 
     </Grid>
 </Window>
