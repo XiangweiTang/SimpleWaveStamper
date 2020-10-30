@@ -53,6 +53,8 @@ namespace SimpleWaveStamper
 
             PlayerSlider.Value = PlayerSlider.Minimum;
 
+            LabelAudioName.Content = $"Currently playing: {FormOps.ShrinkPath(AudioPath)}";
+
             InitializedFlag = true;
         }
         private void PlayerSlider_GotMouseCapture(object sender, MouseEventArgs e)

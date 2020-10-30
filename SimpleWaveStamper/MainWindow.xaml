@@ -12,9 +12,10 @@
         <Button x:Name="BtnPause" Content="Pause" HorizontalAlignment="Left" Margin="183,108,0,0" VerticalAlignment="Top" Width="75" Click="BtnPause_Click"/>
         <Button x:Name="BtnStop" Content="Stop" HorizontalAlignment="Left" Margin="298,108,0,0" VerticalAlignment="Top" Width="75" Click="BtnStop_Click"/>
         <Button x:Name="BtnTimeStamp" Content="TimeStamp" HorizontalAlignment="Left" Margin="404,108,0,0" VerticalAlignment="Top" Width="75" Click="BtnTimeStamp_Click"/>
-        <ListBox x:Name="TimeStampList" HorizontalAlignment="Left" Height="196" Margin="49,152,0,0" VerticalAlignment="Top" Width="100" SelectionChanged="TimeStampList_SelectionChanged"/>
+        <ListBox x:Name="TimeStampList" Height="196" Margin="49,152,646,0" VerticalAlignment="Top" SelectionChanged="TimeStampList_SelectionChanged"/>
         <Button x:Name="BtnSelectAudio" Content="SelectAudio" HorizontalAlignment="Left" Margin="505,108,0,0" VerticalAlignment="Top" Width="74" Click="BtnSelectAudio_Click"/>
         <Button Content="Save" HorizontalAlignment="Left" Margin="623,108,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <Label x:Name="LabelAudioName" Content="You haven't selected an audio yet." HorizontalAlignment="Left" Margin="183,152,0,0" VerticalAlignment="Top" Width="515" Height="28"/>
 
     </Grid>
 </Window>
