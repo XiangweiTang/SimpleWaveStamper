@@ -14,7 +14,7 @@ namespace SimpleWaveStamper
         public int DataLength { get; private set; } = -1;
         public int SampleRate { get; private set; } = -1;
         public int ByteRate { get; private set; } = -1;
-
+        public double AudioLength { get; private set; } = 0;
         public void Load(string wavPath)
         {
             using (FileStream fs = new FileStream(wavPath, FileMode.Open, FileAccess.Read))
@@ -76,6 +76,7 @@ namespace SimpleWaveStamper
             Sanity.Requires(DataLength >= 0, "Missing data chunk.");
             SampleRate = BitConverter.ToInt32(FormatChunk, 4);
             ByteRate = BitConverter.ToInt32(FormatChunk, 8);
+            AudioLength = (double)DataLength / ByteRate;
         }
     }
 }

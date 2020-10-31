@@ -3,50 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace SimpleWaveStamper
 {
     class Storage
     {
         public Storage() { }
-        List<byte[]> InternalSave = new List<byte[]>();
-        public void AddString(string chunkName, string value)
+        public string AudioPath { get; private set; } = "";
+        private void WriteStringToBytes(FileStream fs, string chunkName, string chunkValue)
         {
-            StringChunk c = new StringChunk(chunkName) { ChunkContent = value };
-            InternalSave.Add(c.Merge());
-        }
-    }
-
-    abstract class Chunk
-    {
-        public string ChunkName { get; private set; }
-        public object ChunkContent { get; set; }
-        public Chunk(string chunkName)
-        {
-            Sanity.Requires(ChunkName.Length == 4, "Invalid chunk name size.");
-            Sanity.Requires(ChunkName.All(x => x < 256), "Invalid chunk name.");
-            ChunkName = chunkName;
-        }
-        protected abstract byte[] ConvertContentToBytes();
-        public byte[] Merge()
-        {
-            var contentBytes = ConvertContentToBytes();
-            int dataBytesLength = contentBytes.Length;
-            byte[] fullChunk = new byte[dataBytesLength + 8];
-            byte[] nameBytes = Encoding.ASCII.GetBytes(ChunkName);
-            byte[] lengthBytes = BitConverter.GetBytes(dataBytesLength);
-            Buffer.BlockCopy(nameBytes, 0, fullChunk, 0, 4);
-            Buffer.BlockCopy(lengthBytes, 0, fullChunk, 4, 4);
-            Buffer.BlockCopy(contentBytes, 0, fullChunk, 8, dataBytesLength);
-            return fullChunk;
-        }
-    }
-    class StringChunk : Chunk
-    {
-        public StringChunk(string chunkName) : base(chunkName) { }
-        protected override byte[] ConvertContentToBytes()
-        {
-            return Encoding.UTF8.GetBytes((string)ChunkContent);
+            byte[] header = Encoding.ASCII.GetBytes(chunkName);
+            Sanity.Requires(header.Length == 4, "Invalid chunk name.");            
+            byte[] bytes = Encoding.UTF8.GetBytes(chunkValue);
+            byte[] length = BitConverter.GetBytes(bytes.Length);
+            fs.Write(header, (int)fs.Position, 4);
+            fs.Write(length, (int)fs.Position, 4);
+            fs.Write(bytes, (int)fs.Position, bytes.Length);
         }
     }
 }
