@@ -36,9 +36,8 @@ namespace SimpleWaveStamper
             Wave w = new Wave();
             w.Load(AudioPath);
 
-            AudioLength = 1.0*w.DataLength / w.ByteRate;
-            MilisecondPerValue = 1000.0 * AudioLength / PlayerSlider.Maximum;
-            ValuePerMilisecond = PlayerSlider.Maximum / AudioLength / 1000;
+            MilisecondPerValue = 1000.0 * w.AudioLength / PlayerSlider.Maximum;
+            ValuePerMilisecond = PlayerSlider.Maximum / w.AudioLength / 1000;
 
             MP = new MciPlayer(AudioPath);
             MP.Open();
