@@ -166,6 +166,11 @@ namespace SimpleWaveStamper
                 }
             });
         }
+        private void BtnClearTimeStamp_Click(object sender, RoutedEventArgs e)
+        {
+            TS.PointList = new System.Collections.Generic.List<int>();
+            TimeStampList.ItemsSource = TS.GenerateTimeStampPoint();
+        }
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
             GeneralAction(() =>
@@ -261,5 +266,6 @@ namespace SimpleWaveStamper
             int currentMiliseconds = (int)(PlayerSlider.Value * MilisecondPerValue);
             LabelElapsedTime.Content = Common.MilisecondsToString(currentMiliseconds);
         }
+
     }
 }

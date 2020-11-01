@@ -38,16 +38,5 @@ namespace SimpleWaveStamper
         {
             return PointList.Select(x => Common.MilisecondsToString(x));
         }
-        public IEnumerable<(double, double)> GenerateTimeStampPairs(double max=double.MaxValue)
-        {          
-            double pre = 0;
-            foreach(int i in PointList)
-            {
-                double current = (double)i / 1000;
-                yield return (pre, current);
-                pre = current;
-            }
-            yield return (pre, max);
-        }
     }
 }

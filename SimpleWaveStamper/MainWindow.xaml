@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleWaveStamper"
         mc:Ignorable="d"
-        Title="SimpleWaveStamper" Height="450" Width="800" ResizeMode="NoResize" Closing="Window_Closing">
+        Title="SimpleWaveStamper" Height="400" Width="800" ResizeMode="NoResize" Closing="Window_Closing">
     <Grid>
-        <Slider x:Name="PlayerSlider" HorizontalAlignment="Left" Margin="30,30,0,0" VerticalAlignment="Top" Width="750" GotMouseCapture="PlayerSlider_GotMouseCapture" LostMouseCapture="PlayerSlider_LostMouseCapture" ValueChanged="PlayerSlider_ValueChanged"/>
+        <Slider x:Name="PlayerSlider" HorizontalAlignment="Left" Margin="50,30,0,0" VerticalAlignment="Top" Width="720" GotMouseCapture="PlayerSlider_GotMouseCapture" LostMouseCapture="PlayerSlider_LostMouseCapture" ValueChanged="PlayerSlider_ValueChanged"/>
         
         <Label x:Name="LabelAudioName" Content="You haven't selected an audio yet." HorizontalAlignment="Left" Margin="50,55,0,0" VerticalAlignment="Top" Width="480" Height="28"/>
         <Label x:Name="LabelElapsedTime" Content="Elapsed time:" HorizontalAlignment="Left" Margin="550,55,0,0" VerticalAlignment="Top" Width="230"/>
@@ -21,9 +21,11 @@
         
         <Button x:Name="BtnAddTimeStamp" Content="Add" HorizontalAlignment="Left" Margin="320,120,0,0" VerticalAlignment="Top" Width="75" Click="BtnAddTimeStamp_Click"/>
         <Button x:Name="BtnDeleteTimeStamp" Content="Delete" HorizontalAlignment="Left" Margin="320,150,0,0" VerticalAlignment="Top" Width="75" Click="BtnDeleteTimeStamp_Click"/>
-        <Button x:Name="BtnSave" Content="Save" HorizontalAlignment="Left" Margin="320,180,0,0" VerticalAlignment="Top" Width="75" Click="BtnSave_Click"/>
-        <Button x:Name="BtnGenerate" Content="Generate" HorizontalAlignment="Left" Margin="320,210,0,0" VerticalAlignment="Top" Width="75" Click="BtnGenerate_Click"/>
+        <Button x:Name="BtnClearTimeStamp" Content="Clear" HorizontalAlignment="Left" Margin="320,180,0,0" VerticalAlignment="Top" Width="75" Click="BtnClearTimeStamp_Click"/>
+        <Button x:Name="BtnSave" Content="Save" HorizontalAlignment="Left" Margin="320,210,0,0" VerticalAlignment="Top" Width="75" Click="BtnSave_Click"/>        
+        <Button x:Name="BtnGenerate" Content="Generate" HorizontalAlignment="Left" Margin="320,240,0,0" VerticalAlignment="Top" Width="75" Click="BtnGenerate_Click"/>
         
-        <ListBox x:Name="TimeStampList" Height="232" Margin="50,120,500,0" VerticalAlignment="Top" SelectionChanged="TimeStampList_SelectionChanged" MouseDoubleClick="TimeStampList_MouseDoubleClick"/>        
+        <ListBox x:Name="TimeStampList" Height="232" Margin="50,120,500,0" VerticalAlignment="Top" SelectionChanged="TimeStampList_SelectionChanged" MouseDoubleClick="TimeStampList_MouseDoubleClick"/>
+        
     </Grid>
 </Window>
