@@ -19,11 +19,11 @@
         <Button x:Name="BtnStop" Content="Stop" HorizontalAlignment="Left" Margin="400,90,0,0" VerticalAlignment="Top" Width="75" Click="BtnStop_Click"/>
         <Button x:Name="BtnStepForward" Content="Fwd 10s" HorizontalAlignment="Left" Margin="480,90,0,0" VerticalAlignment="Top" Width="75" Click="BtnStepForward_Click"/>
         
-        <Button x:Name="BtnAddTimeStamp" Content="Add" HorizontalAlignment="Left" Margin="300,120,0,0" VerticalAlignment="Top" Width="75" Click="BtnAddTimeStamp_Click"/>
-        <Button x:Name="BtnDeleteTimeStamp" Content="Delete" HorizontalAlignment="Left" Margin="300,150,0,0" VerticalAlignment="Top" Width="75" Click="BtnDeleteTimeStamp_Click"/>
-        <Button x:Name="BtnSave" Content="Save" HorizontalAlignment="Left" Margin="300,180,0,0" VerticalAlignment="Top" Width="75" Click="BtnSave_Click"/>
-        <Button x:Name="BtnGenerate" Content="Generate" HorizontalAlignment="Left" Margin="300,210,0,0" VerticalAlignment="Top" Width="75" Click="BtnGenerate_Click"/>
+        <Button x:Name="BtnAddTimeStamp" Content="Add" HorizontalAlignment="Left" Margin="320,120,0,0" VerticalAlignment="Top" Width="75" Click="BtnAddTimeStamp_Click"/>
+        <Button x:Name="BtnDeleteTimeStamp" Content="Delete" HorizontalAlignment="Left" Margin="320,150,0,0" VerticalAlignment="Top" Width="75" Click="BtnDeleteTimeStamp_Click"/>
+        <Button x:Name="BtnSave" Content="Save" HorizontalAlignment="Left" Margin="320,180,0,0" VerticalAlignment="Top" Width="75" Click="BtnSave_Click"/>
+        <Button x:Name="BtnGenerate" Content="Generate" HorizontalAlignment="Left" Margin="320,210,0,0" VerticalAlignment="Top" Width="75" Click="BtnGenerate_Click"/>
         
-        <ListBox x:Name="TimeStampList" Height="232" Margin="50,120,520,0" VerticalAlignment="Top" SelectionChanged="TimeStampList_SelectionChanged" MouseDoubleClick="TimeStampList_MouseDoubleClick"/>        
+        <ListBox x:Name="TimeStampList" Height="232" Margin="50,120,500,0" VerticalAlignment="Top" SelectionChanged="TimeStampList_SelectionChanged" MouseDoubleClick="TimeStampList_MouseDoubleClick"/>        
     </Grid>
 </Window>

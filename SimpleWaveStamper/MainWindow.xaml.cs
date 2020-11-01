@@ -182,7 +182,7 @@ namespace SimpleWaveStamper
                 string hmsTextPath = $"{dt:yyyyMMdd_hhmmss}_hms.txt";
                 string sTextPath = $"{dt:yyyyMMdd_hhmmss}_seconds.txt";
                 S.ConverToTimeStampText(hmsTextPath, sTextPath);
-                MessageBox.Show("Time stamps have been saved.");
+                MessageBox.Show($"Time stamp has been saved to {dt:yyyyMMdd_hhmmss}.");
             });
         }
 
