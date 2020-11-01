@@ -15,17 +15,18 @@ namespace SimpleWaveStamper
     public partial class MainWindow : Window
     {
         private string AudioPath = @"";
+        private Storage S = new Storage();
         MciPlayer MP = null;
         private double MilisecondPerValue = 1;
         private double ValuePerMilisecond = 1;        
         System.Windows.Forms.Timer PlayerTimer = new System.Windows.Forms.Timer();
-        System.Windows.Forms.Timer SaverTimer = new System.Windows.Forms.Timer();
         TimeStamps TS = new TimeStamps();
         bool InitializedFlag = false;
-        double AudioLength = double.MaxValue;
+        int AudioLength = 0;
         public MainWindow()
         {
             InitializeComponent();
+            Load();
             BackendInit();
         }
         private void BackendInit()
@@ -36,8 +37,9 @@ namespace SimpleWaveStamper
             Wave w = new Wave();
             w.Load(AudioPath);
 
-            MilisecondPerValue = 1000.0 * w.AudioLength / PlayerSlider.Maximum;
-            ValuePerMilisecond = PlayerSlider.Maximum / w.AudioLength / 1000;
+            AudioLength = (int)(w.AudioLength * 1000);
+            MilisecondPerValue = AudioLength / PlayerSlider.Maximum;
+            ValuePerMilisecond = PlayerSlider.Maximum / AudioLength;
 
             MP = new MciPlayer(AudioPath);
             MP.Open();
@@ -46,85 +48,191 @@ namespace SimpleWaveStamper
             // The player refresh every 100 miliseconds.
             PlayerTimer.Interval = 100;
 
-            SaverTimer.Tick += new EventHandler(OutputTimeStamp);
-            // The saver auto save every 20 seconds.
-            SaverTimer.Interval = 1000 * 20;
-
             PlayerSlider.Value = PlayerSlider.Minimum;
 
             LabelAudioName.Content = $"Currently playing: {FormOps.ShrinkPath(AudioPath)}";
 
             InitializedFlag = true;
         }
+        private void Load()
+        {
+            if (!File.Exists(S.SavingPath))
+                return;
+            try
+            {
+                S.Load();
+                AudioPath = S.AudioPath;
+                TS.PointList = S.TimeStampPointList;
+                TimeStampList.ItemsSource = TS.GenerateTimeStampPoint();
+            }
+            catch
+            {
+                MessageBox.Show("Saving file broken.\tClear the saving.");
+                S.Clear();
+            }
+        }
+
         private void PlayerSlider_GotMouseCapture(object sender, MouseEventArgs e)
         {
-            if (!InitializedFlag)
-                return;
-            if (MP != null)
+            GeneralAction(() =>
             {
                 MP.Pause();
                 PlayerTimer.Stop();
-            }
-            else
-                ErrorAudioNotInitialized();
+            });
         }
-
         private void PlayerSlider_LostMouseCapture(object sender, MouseEventArgs e)
         {
-            if (!InitializedFlag)
-                return;
-            if (MP != null)
+            GeneralAction(() =>
             {
-                int miliseconds = (int)(MilisecondPerValue * PlayerSlider.Value);
-                //MP.PlayFrom(miliseconds);
-                //PlayerTimer.Start();
+                int miliseconds = (int)(PlayerSlider.Value * MilisecondPerValue);
+                MP.PlayFrom(miliseconds);
+                PlayerTimer.Start();
+            });
+        }        
+        private void PlayerSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            GeneralAction(() =>
+            {
+                LabelElapsedTime.Content = $"Elapsed time: {TimeStampList.SelectedItem}";
+            });
+        }
+        
+        private void BtnSelectAudio_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            if (dialog.ShowDialog() == true)
+            {
+                AudioPath = dialog.FileName;
+                BackendInit();
             }
-            else
-                ErrorAudioNotInitialized();
         }
 
+        private void BtnStepBack_Click(object sender, RoutedEventArgs e)
+        {
+            GeneralAction(() => TimeChange(-10 * 1000));
+        }
         private void BtnPlay_Click(object sender, RoutedEventArgs e)
         {
-            if (!InitializedFlag)
-                return;
-            if (MP != null)
+            GeneralAction(() =>
             {
                 if (PlayerSlider.Value == PlayerSlider.Maximum)
                     PlayerSlider.Value = PlayerSlider.Minimum;
                 MP.PlayFrom((int)(PlayerSlider.Value * MilisecondPerValue));
                 PlayerTimer.Start();
-            }
-            else
-                ErrorAudioNotInitialized();
+            });
         }
-
         private void BtnPause_Click(object sender, RoutedEventArgs e)
         {
-            if (!InitializedFlag)
-                return;
-            if (MP != null)
+            GeneralAction(() =>
             {
                 MP.Pause();
                 PlayerTimer.Stop();
-            }
-            else
-                ErrorAudioNotInitialized();
+            });
+        }
+        private void BtnStop_Click(object sender, RoutedEventArgs e)
+        {
+            GeneralAction(() =>
+            {
+                MP.Stop();
+                PlayerTimer.Stop();
+                PlayerSlider.Value = 0;
+            });
+        }
+        private void BtnStepForward_Click(object sender, RoutedEventArgs e)
+        {
+            GeneralAction(() => TimeChange(10 * 1000));
         }
 
-        private void BtnStop_Click(object sender, RoutedEventArgs e)
+        private void BtnAddTimeStamp_Click(object sender, RoutedEventArgs e)
+        {
+            GeneralAction(() =>
+            {
+                MP.Pause();
+                PlayerTimer.Stop();
+                int miliseconds = (int)(MilisecondPerValue * PlayerSlider.Value);
+                TS.Add(miliseconds);
+                TimeStampList.ItemsSource = TS.GenerateTimeStampPoint();
+            });
+        }
+        private void BtnDeleteTimeStamp_Click(object sender, RoutedEventArgs e)
+        {
+            GeneralAction(() =>
+            {
+                int i = TimeStampList.SelectedIndex;
+                if (i >= 0 && i < TS.PointList.Count)
+                {
+                    TS.PointList.RemoveAt(i);
+                    TimeStampList.ItemsSource = TS.GenerateTimeStampPoint();                    
+                }
+            });
+        }
+        private void BtnSave_Click(object sender, RoutedEventArgs e)
+        {
+            GeneralAction(() =>
+            {
+                Save();
+                MessageBox.Show($"Time stamp has been saved to {S.SavingPath}.");
+            });
+        }
+        private void BtnGenerate_Click(object sender, RoutedEventArgs e)
+        {
+            GeneralAction(() =>
+            {
+                DateTime dt = DateTime.Now;
+                string hmsTextPath = $"{dt:yyyyMMdd_hhmmss}_hms.txt";
+                string sTextPath = $"{dt:yyyyMMdd_hhmmss}_seconds.txt";
+                S.ConverToTimeStampText(hmsTextPath, sTextPath);
+                MessageBox.Show("Time stamps have been saved.");
+            });
+        }
+
+
+        private void TimeStampList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            GeneralAction(() =>
+            {
+                MP.Pause();
+                PlayerTimer.Stop();
+                if (TimeStampList.SelectedIndex >= 0)
+                {
+                    int miliSeconds = TS[TimeStampList.SelectedIndex];
+                    PlayerSlider.Value = miliSeconds * ValuePerMilisecond;
+                    LabelElapsedTime.Content = $"Elapsed time: {Common.MilisecondsToString(miliSeconds)}";
+                }
+            });
+        }
+        private void TimeStampList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            GeneralAction(() =>
+            {
+                MP.Pause();
+                PlayerTimer.Stop();
+                int miliSeconds = TS[TimeStampList.SelectedIndex];
+                PlayerSlider.Value = miliSeconds * ValuePerMilisecond;
+                LabelElapsedTime.Content = $"Elapsed time: {TimeStampList.SelectedItem}";
+                MP.PlayFrom(miliSeconds);
+                PlayerTimer.Start();
+            });
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {            
+            Save();
+        }
+
+        private void GeneralAction(Action action)
         {
             if (!InitializedFlag)
                 return;
             if (MP != null)
             {
-                MP.Stop();
-                PlayerTimer.Stop();
+                action.Invoke();
             }
             else
+            {
                 ErrorAudioNotInitialized();
-            PlayerSlider.Value = 0;
+            }
         }
-
         private void ErrorAudioNotInitialized()
         {
             MessageBox.Show("The audio file is not set.");
@@ -133,53 +241,25 @@ namespace SimpleWaveStamper
         {
             PlayerSlider.Value = int.Parse(MP.Position()) * ValuePerMilisecond;
         }
-
-        private void BtnTimeStamp_Click(object sender, RoutedEventArgs e)
+        private void Save()
         {
-            if (!InitializedFlag)
-                return;
-            if (MP != null)
-            {
-                MP.Pause();
-                PlayerTimer.Stop();
-                int miliseconds = (int)(MilisecondPerValue * PlayerSlider.Value);
-                TS.Add(miliseconds);
-                TimeStampList.ItemsSource = TS.GenerateTimeStampPoint();
-            }
-            else
-                ErrorAudioNotInitialized();
+            S.AudioPath = AudioPath;
+            S.AudioLength = AudioLength;
+            S.TimeStampPointList = TS.PointList;
+            S.Save();
         }
-
-        private void TimeStampList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void TimeChange(int milisecondsDiff)
         {
-            if (!InitializedFlag)
-                return;
             MP.Pause();
-            int miliseconds = TS[TimeStampList.SelectedIndex];
-            PlayerSlider.Value = miliseconds * ValuePerMilisecond;
-        }
-
-        private void BtnSelectAudio_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog dialog = new OpenFileDialog();
-            if (dialog.ShowDialog() == true)
-            {
-                AudioPath = dialog.FileName;
-            }
-            BackendInit();
-        }
-
-        const string SAVING_PATH = @"TimeStamp.txt";
-        private void OutputTimeStamp(object sender, EventArgs e)
-        {
-            var list = TS.GenerateTimeStampPairs(AudioLength).Select(x => $"{x.Item1}\t{x.Item2}");
-            File.WriteAllLines(SAVING_PATH, list);
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            OutputTimeStamp(new object(),new EventArgs());
-            MessageBox.Show($"Time stamp has been saved to {SAVING_PATH}.");
+            PlayerTimer.Stop();
+            double currentValue = milisecondsDiff * ValuePerMilisecond + PlayerSlider.Value;
+            if (currentValue > PlayerSlider.Maximum)
+                currentValue = PlayerSlider.Maximum;
+            else if (currentValue < PlayerSlider.Minimum)
+                currentValue = PlayerSlider.Minimum;
+            PlayerSlider.Value = currentValue;
+            int currentMiliseconds = (int)(PlayerSlider.Value * MilisecondPerValue);
+            LabelElapsedTime.Content = Common.MilisecondsToString(currentMiliseconds);
         }
     }
 }
