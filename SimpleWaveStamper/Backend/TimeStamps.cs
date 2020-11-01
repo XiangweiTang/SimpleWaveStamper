@@ -9,49 +9,39 @@ namespace SimpleWaveStamper
 {
     class TimeStamps
     {
-        List<int> InternalMilisecondsList = new List<int>();
+        public List<int> PointList { get; set; } = new List<int>();
         public TimeStamps() { Clear(); }
         public int this[int index]
         {
             get
             {
-                return InternalMilisecondsList[index];
+                return PointList[index];
             }
         }
-        public void Clear() { InternalMilisecondsList = new List<int>(); }
+        public void Clear() { PointList = new List<int>(); }
         public void Add(string s)
         {
             int miliseconds = int.Parse(s);
-            InternalMilisecondsList.Add(miliseconds);
-            InternalMilisecondsList.Sort();
+            PointList.Add(miliseconds);
+            PointList.Sort();
         }
         public void Add(int miliseconds)
         {
-            InternalMilisecondsList.Add(miliseconds);
-            InternalMilisecondsList.Sort();
+            PointList.Add(miliseconds);
+            PointList.Sort();
         }
         public void Remove(int i)
         {
-            InternalMilisecondsList.RemoveAt(i);
+            PointList.RemoveAt(i);
         }
         public IEnumerable<string> GenerateTimeStampPoint()
         {
-            foreach(int i in InternalMilisecondsList)
-            {
-                int mSeconds = i % 1000;
-                int r = i / 1000;
-                int seconds = r % 60;
-                r = r / 60;
-                int minutes = r % 60;
-                r = r / 60;
-                int hour = r;
-                yield return $"{hour:00}:{minutes:00}:{seconds:00}.{mSeconds:000}";
-            }
+            return PointList.Select(x => Common.MilisecondsToString(x));
         }
         public IEnumerable<(double, double)> GenerateTimeStampPairs(double max=double.MaxValue)
         {          
             double pre = 0;
-            foreach(int i in InternalMilisecondsList)
+            foreach(int i in PointList)
             {
                 double current = (double)i / 1000;
                 yield return (pre, current);
