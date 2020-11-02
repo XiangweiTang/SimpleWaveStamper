@@ -84,16 +84,16 @@ namespace SimpleWaveStamper
         {
             GeneralAction(() =>
             {
-                int miliseconds = (int)(PlayerSlider.Value * MilisecondPerValue);
-                MP.PlayFrom(miliseconds);
-                PlayerTimer.Start();
+                //MP.PlayFrom(miliseconds);
+                //PlayerTimer.Start();
             });
         }        
         private void PlayerSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             GeneralAction(() =>
             {
-                LabelElapsedTime.Content = $"Elapsed time: {TimeStampList.SelectedItem}";
+                int miliseconds = (int)(PlayerSlider.Value * MilisecondPerValue);
+                LabelElapsedTime.Content = $"Elapsed time: {Common.MilisecondsToString(miliseconds)}";
             });
         }
         
